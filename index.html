@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Heart Animation for Girlfriend</title>
+<!-- Google Font for a robot style -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<style>
+  body {
+    background: linear-gradient(to right, #ffe6e6, #fff0f5);
+    margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    position: relative;
+    font-family: 'Press Start 2P', cursive;
+    transition: background 1s;
+  }
+
+  /* Centered Button */
+  #loveButton {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px 30px;
+    font-size: 1.5em;
+    background-color: #ff4d6d;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: background-color 0.3s;
+    z-index: 10;
+  }
+
+  #loveButton:hover {
+    background-color: #ff1a3d;
+  }
+
+  /* Heart styles */
+  .heart {
+    position: absolute;
+    font-size: 50px;
+    color: red;
+    animation: floatAndBeat 4s ease-in-out;
+    opacity: 0;
+  }
+
+  @keyframes floatAndBeat {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+
+  /* Message style */
+  #message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Allow wrapping within 80% of container width */
+    max-width: 90%;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2em; /* Slightly smaller font for longer message */
+    font-weight: normal;
+    color: pink;
+    white-space: normal; /* Allow wrapping */
+    word-wrap: break-word;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 20;
+    line-height: 1.4; /* Better readability for multiline text */
+  }
+
+  /* Flowers container (hidden initially) */
+  #flowersContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none; /* Hidden until triggered */
+    z-index: 30;
+  }
+
+  /* Individual flower styles */
+  .flower {
+    position: absolute;
+    font-size: 4em; /* Larger size for full-screen effect */
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  /* Keyframes for bursting flowers with scaling */
+  @keyframes burst {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Centered Button -->
+<button id="loveButton">Say 'I Love You'</button>
+
+<!-- Message element -->
+<div id="message"></div>
+
+<!-- Flowers container -->
+<div id="flowersContainer"></div>
+
+<script>
+  const heartCount = 20;
+  const hearts = [];
+
+  // Create floating hearts
+  for (let i = 0; i < heartCount; i++) {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.innerHTML = '❤️';
+    heart.style.top = Math.random() * 100 + 'vh';
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.animationDelay = (Math.random() * 4) + 's';
+    document.body.appendChild(heart);
+    hearts.push(heart);
+  }
+
+  // Drift hearts periodically
+  setInterval(() => {
+    hearts.forEach(heart => {
+      heart.style.top = Math.random() * 100 + 'vh';
+      heart.style.left = Math.random() * 100 + 'vw';
+    });
+  }, 3000);
+
+  const button = document.getElementById('loveButton');
+  const messageDiv = document.getElementById('message');
+  const flowersContainer = document.getElementById('flowersContainer');
+
+  // When button clicked
+  button.addEventListener('click', () => {
+    // Change background to black
+    document.body.style.background = 'black';
+
+    // Fade out hearts
+    hearts.forEach(h => {
+      h.style.transition = 'opacity 1s';
+      h.style.opacity = 0;
+    });
+
+    // Hide button
+    document.getElementById('loveButton').style.display = 'none';
+
+    // Show message with typing
+    showMessage();
+  });
+
+  function showMessage() {
+    // Set position and display
+    messageDiv.style.top = '50%';
+    messageDiv.style.left = '50%';
+    messageDiv.style.opacity = 1;
+    messageDiv.innerHTML = '';
+
+    // Start typing longer message
+    typeWriter("Iloveyou so much day thanks for everything", 0);
+  }
+
+  function typeWriter(text, index) {
+    if (index < text.length) {
+      messageDiv.innerHTML += text.charAt(index);
+      messageDiv.style.borderRight = '3px solid pink'; // blinking cursor
+      setTimeout(() => {
+        typeWriter(text, index + 1);
+      }, 150); // Slightly faster for better fitting
+    } else {
+      // Remove cursor
+      messageDiv.style.borderRight = 'none';
+
+      // Add bounce after typing
+      bounceAnimation();
+
+      // After bounce, trigger flower burst
+      setTimeout(triggerFlowerBurst, 1500);
+    }
+  }
+
+  function bounceAnimation() {
+    // Bounce effect
+    messageDiv.animate([
+      { transform: 'translateY(0) scale(1)' },
+      { transform: 'translateY(-20px) scale(1.1)' },
+      { transform: 'translateY(0) scale(1)' }
+    ], {
+      duration: 800,
+      iterations: 1
+    });
+  }
+
+  function triggerFlowerBurst() {
+    // Show the flowers container
+    flowersContainer.style.display = 'block';
+
+    // Generate larger flowers with more dramatic burst
+    const symbols = ['🌸', '🌺', '💐', '🌻', '🌹'];
+    const flowerColors = ['#FF69B4', '#FF1493', '#FF4500', '#FFD700', '#ADFF2F', '#00BFFF', '#FF69B4'];
+    const numberOfFlowers = 30; // More flowers for a full screen effect
+
+    for (let i = 0; i < numberOfFlowers; i++) {
+      const flower = document.createElement('div');
+      flower.className = 'flower';
+      // Random symbol for variety
+      flower.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+      // Random color
+      flower.style.color = flowerColors[Math.floor(Math.random() * flowerColors.length)];
+      // Center position
+      flower.style.left = '50%';
+      flower.style.top = '50%';
+
+      // Append to container
+      flowersContainer.appendChild(flower);
+
+      // Random direction and distance
+      const angle = Math.random() * 2 * Math.PI; // 0 to 2π
+      const distance = 200 + Math.random() * 200; // 200px to 400px
+
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+
+      // Animate outward with larger scale
+      setTimeout(() => {
+        const animation = flower.animate([
+          { transform: 'translate(0, 0) scale(0)', opacity: 0 },
+          { transform: `translate(${x}px, ${y}px)`, opacity: 1, transform: `translate(${x}px, ${y}px) scale(1)` }
+        ], {
+          duration: 1500,
+          fill: 'forwards'
+        });
+      }, Math.random() * 500); // random delay for a burst effect
+    }
+  }
+</script>
+
+</body>
+</html>
